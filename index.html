@@ -194,8 +194,8 @@
   const lerp=(a,b,t)=>a+(b-a)*t;
   const fmt=(n,d=1)=>n.toFixed(d).replace('.',',');
   const el=id=>document.getElementById(id);
-  // FRAMES reais (gerados de /Fotos por tools/make_frames.ps1)
-  const FRAMES=Array.from({length:20},(_,i)=>`fotos/frame_${String(i+1).padStart(2,'0')}.jpg`);
+  // FRAMES reais (planos, na mesma pasta do index — robusto p/ upload do GitHub Pages)
+  const FRAMES=Array.from({length:20},(_,i)=>`frame_${String(i+1).padStart(2,'0')}.jpg`);
   const imgs=FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
   const cv=el('film'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
   function placeholder(t){ctx.fillStyle='#0d0d11';ctx.fillRect(0,0,W,H);ctx.fillStyle='#FFC72C';ctx.font='28px sans-serif';ctx.fillText('Maestro',40,60);}
@@ -232,11 +232,11 @@
 })();
 </script>
 
-<script src="js/config.js"></script>
-<script src="js/motor.js"></script>
-<script src="js/ingest.js"></script>
-<script src="js/data.js"></script>
-<script src="js/ai.js"></script>
-<script src="js/app.js"></script>
+<script src="config.js"></script>
+<script src="motor.js"></script>
+<script src="ingest.js"></script>
+<script src="data.js"></script>
+<script src="ai.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

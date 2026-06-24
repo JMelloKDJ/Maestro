@@ -1,0 +1,132 @@
+{
+  "cenarios": [
+    {
+      "nome": "McD vs BK — Promoção semanal de combo",
+      "descricao": "Ambas redes decidem semanalmente se lançam promoção agressiva (-30%) ou mantém preço cheio. Lucro semanal estimado (R$ mil).",
+      "jogador_linha": "McDonald's",
+      "jogador_coluna": "Burger King",
+      "estrategias_linha": [
+        "Promoção agressiva",
+        "Preço cheio"
+      ],
+      "estrategias_coluna": [
+        "Promoção agressiva",
+        "Preço cheio"
+      ],
+      "matriz_payoff": [
+        [
+          [
+            45,
+            38
+          ],
+          [
+            95,
+            25
+          ]
+        ],
+        [
+          [
+            28,
+            88
+          ],
+          [
+            75,
+            65
+          ]
+        ]
+      ],
+      "tipo": "Dilema do prisioneiro",
+      "comentario_professor": "Nash em (Promoção, Promoção) — ambos preferem promover dado o que o outro faz, mas (Cheio, Cheio) seria coletivamente melhor"
+    },
+    {
+      "nome": "McD vs Madero — Lançamento Quarteirão Premium vs Madero Clássico",
+      "descricao": "McD pode lançar versão premium em SP por R$ 35 ou linha econômica por R$ 22. Madero responde com preço alto (R$ 45) ou desconto (R$ 35).",
+      "jogador_linha": "McDonald's",
+      "jogador_coluna": "Madero",
+      "estrategias_linha": [
+        "Lançar premium R$35",
+        "Manter linha R$22"
+      ],
+      "estrategias_coluna": [
+        "Preço alto R$45",
+        "Desconto R$35"
+      ],
+      "matriz_payoff": [
+        [
+          [
+            62,
+            78
+          ],
+          [
+            38,
+            95
+          ]
+        ],
+        [
+          [
+            85,
+            68
+          ],
+          [
+            72,
+            82
+          ]
+        ]
+      ],
+      "tipo": "Sem Nash puro — explorar estratégia mista",
+      "comentario_professor": "Verificar dominância: nenhuma estratégia domina. Calcular probabilidades de mistura ótimas"
+    },
+    {
+      "nome": "McD vs Subway — Investimento em café da manhã",
+      "descricao": "Ambos consideram expandir oferta de café da manhã (6h-10h). Investir requer reforma e contratação. Se só um investir, captura mercado todo. Se ambos, mercado se divide.",
+      "jogador_linha": "McDonald's",
+      "jogador_coluna": "Subway",
+      "estrategias_linha": [
+        "Investir forte",
+        "Manter atual"
+      ],
+      "estrategias_coluna": [
+        "Investir forte",
+        "Manter atual"
+      ],
+      "matriz_payoff": [
+        [
+          [
+            35,
+            32
+          ],
+          [
+            78,
+            18
+          ]
+        ],
+        [
+          [
+            15,
+            85
+          ],
+          [
+            52,
+            50
+          ]
+        ]
+      ],
+      "tipo": "Jogo de coordenação — dois Nash puros assimétricos",
+      "comentario_professor": "Nash em (Investir, Manter) e (Manter, Investir). Quem se move primeiro captura — vantagem do primeiro entrante"
+    }
+  ],
+  "cenario_avancado_3D": {
+    "nome": "Triplo — McD vs BK vs Habib's — Sanduíche regional baiano",
+    "descricao": "Três redes podem lançar sanduíche regional (acarajé/baião/moqueca). Cada um decide entrar (E) ou não (N). Mercado regional cabe ~2 jogadores bem.",
+    "jogador_linha": "McDonald's",
+    "jogador_coluna": "Burger King",
+    "jogador_terceiro": "Habib's",
+    "estrategias_linha": [
+      "Entrar",
+      "Não entrar"
+    ],
+    "matriz_3D_payoff": "Ver tabela detalhada em CSV separado",
+    "tipo": "Jogo de 3 jogadores — equilíbrios múltiplos",
+    "comentario_professor": "Habib's tem vantagem cultural local. Modelar como sequencial ou simultâneo muda resultado"
+  }
+}
