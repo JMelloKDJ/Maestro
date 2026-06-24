@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Maestro — Cockpit de Decisão (PO II · McDonald's)</title>
+<!-- Dependências (regra dura: só Chart.js, math.js e Supabase) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjs@12.4.1/lib/browser/math.js"></script>
+<style>
+  :root{
+    --bg:#0e1116; --bg2:#151a22; --card:#1b212b; --line:#2a3340; --ink:#e8edf4; --mut:#9aa7b8; --muted:#9aa7b8;
+    --amber:#ffbc0d; --gold:#ffbc0d; --red:#da291c; --green:#27ae60; --blue:#4c9be8; --warn:#e67e22;
+    --r:14px; --sh:0 6px 24px rgba(0,0,0,.28);
+  }
+  *{box-sizing:border-box} html,body{margin:0} body{overflow-x:hidden}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  a{color:var(--blue)}
+  .hidden{display:none!important}
+  .muted{color:var(--mut)} .small{font-size:12px} .mono{font-family:'SF Mono',Consolas,monospace}
+  .row{display:flex;gap:14px;flex-wrap:wrap} .col{display:flex;flex-direction:column;gap:14px}
+  .grow{flex:1} .center{align-items:center} .between{justify-content:space-between}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+  .card h3{margin:0 0 4px} .card .sub{color:var(--mut);font-size:13px;margin-bottom:12px}
+  .kpi{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:150px}
+  .kpi .v{font-size:26px;font-weight:700} .kpi .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .btn{background:var(--amber);color:#1a1a1a;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:14px}
+  .btn:hover{filter:brightness(1.05)} .btn.sec{background:var(--bg2);color:var(--ink);border:1px solid var(--line)}
+  .btn.red{background:var(--red);color:#fff} .btn.sm{padding:6px 10px;font-size:12px;border-radius:8px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  input,select,textarea{background:var(--bg2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 11px;font-size:14px;font-family:inherit}
+  label.fld{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--mut)}
+  table{border-collapse:collapse;width:100%;font-size:13px} th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:right}
+  th:first-child,td:first-child{text-align:left} thead th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase}
+  tr.crit td{color:var(--amber);font-weight:700}
+  .tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+  .tag.ok{background:rgba(39,174,96,.15);color:#5fd28a} .tag.bad{background:rgba(218,41,28,.15);color:#ff7d72}
+  .tag.warn{background:rgba(230,126,34,.16);color:#f1a35a} .tag.piloto{background:rgba(76,155,232,.16);color:#7fc0ff}
+  .tag.campo{background:rgba(255,188,13,.16);color:#ffd45f}
+  .smell{border-left:3px solid var(--warn);background:rgba(230,126,34,.08);padding:8px 12px;border-radius:0 8px 8px 0;font-size:12.5px;margin:8px 0}
+  .formula{background:#0b0e13;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-family:'SF Mono',Consolas,monospace;font-size:13px;color:#cfe3ff}
+  .nav{display:flex;gap:4px;flex-wrap:wrap}
+  .nav button{background:transparent;border:0;color:var(--mut);padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px}
+  .nav button.active{background:var(--card);color:var(--ink)}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(14,17,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 18px}
+  .brand{font-weight:800;letter-spacing:.02em;font-size:18px} .brand b{color:var(--amber)}
+  .wrap{max-width:1280px;margin:0 auto;padding:18px}
+  .ia-panel{position:fixed;right:0;top:0;height:100vh;width:360px;background:var(--bg2);border-left:1px solid var(--line);box-shadow:-8px 0 30px rgba(0,0,0,.4);transform:translateX(100%);transition:.25s;z-index:50;display:flex;flex-direction:column}
+  .ia-panel.open{transform:none}
+  .ia-msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .ia-msg{padding:10px 12px;border-radius:12px;font-size:13.5px;max-width:90%}
+  .ia-msg.ia{background:var(--card);border:1px solid var(--line)} .ia-msg.eu{background:var(--amber);color:#1a1a1a;align-self:flex-end}
+  .ia-cite{font-size:11px;color:var(--mut);margin-top:6px;border-top:1px dashed var(--line);padding-top:6px}
+  canvas{max-width:100%}
+  /* ===== LANDING "vídeo corrido" (Ato 1 → login inline) ===== */
+  .wordmark{position:fixed;top:18px;left:22px;z-index:50;font-weight:800;letter-spacing:.14em;font-size:15px}
+  .wordmark b{color:var(--gold)}
+  .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--red));z-index:60;width:0}
+  .scrolly{height:460vh;position:relative}
+  .stage{position:sticky;top:0;height:100vh;overflow:hidden}
+  .film-wrap{position:absolute;inset:0;transition:filter .08s linear}
+  #film{width:100%;height:100%;display:block;object-fit:cover}
+  .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 80% at 50% 30%,transparent 55%,rgba(0,0,0,.55))}
+  .hint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);color:#cfcabf;font-size:12px;letter-spacing:.2em;text-transform:uppercase;z-index:5}
+  .hint::after{content:"";display:block;width:1px;height:24px;margin:9px auto 0;background:#cfcabf;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
+  .cap{position:absolute;left:7%;top:24%;max-width:540px;opacity:0;transform:translateY(18px);pointer-events:none;z-index:4;transition:all .4s ease;text-shadow:0 2px 18px rgba(0,0,0,.7)}
+  .cap .k{color:var(--gold);font-size:13px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+  .cap h2{font-size:clamp(28px,4.4vw,52px);line-height:1.04;font-weight:800} .cap p{margin-top:14px;color:#e9e5db;font-size:17px;line-height:1.5}
+  .badge{position:absolute;z-index:4;background:rgba(10,10,12,.78);border:1px solid #2b2b33;backdrop-filter:blur(4px);border-radius:10px;padding:8px 12px;opacity:0;transition:opacity .25s}
+  .badge .lab{color:var(--muted);font-size:11px;letter-spacing:.08em} .badge .val{font-weight:700;font-size:18px} .badge .val small{font-size:12px;color:var(--muted);font-weight:500}
+  .cockpitPv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;opacity:0;pointer-events:none;z-index:6}
+  .cockpitPv .lead{color:var(--gold);font-size:13px;letter-spacing:.22em;text-transform:uppercase}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:min(880px,86vw)}
+  .kpis .kpi .num{font-size:30px;font-weight:800;margin-top:6px} .kpis .num.gold{color:var(--gold)} .kpis .num.red{color:#ff6a5e}
+  .themes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center} .themes span{border:1px solid #2b2b33;border-radius:999px;padding:7px 16px;font-size:13px;color:#cfcabf}
+  section.enter{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:60px 20px;background:radial-gradient(80% 60% at 50% 20%,rgba(218,41,28,.12),transparent),var(--bg)}
+  section.enter .k{color:var(--gold);font-size:13px;letter-spacing:.22em;text-transform:uppercase}
+  section.enter h2{font-size:clamp(30px,5vw,52px);font-weight:800}
+  section.enter p{color:#cfcabf;max-width:560px;line-height:1.55}
+  .roles{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+  .roles button{cursor:pointer;border:1px solid #3a3a44;background:transparent;color:var(--ink);border-radius:12px;padding:13px 24px;font-weight:700;font-size:15px;transition:.15s}
+  .roles button.on{outline:3px solid var(--gold);background:rgba(255,188,13,.12)}
+  .loginbox{display:flex;flex-direction:column;gap:10px;width:min(360px,92vw);margin-top:6px}
+  section.ba{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 20px;gap:20px}
+  section.ba h3{font-size:clamp(24px,3.4vw,38px);font-weight:800;text-align:center} section.ba h3 b{color:var(--gold)}
+  section.ba .sub{color:var(--muted);max-width:620px;text-align:center;margin-top:-6px;line-height:1.55}
+  .compare{position:relative;width:min(960px,92vw);aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid #23232b;user-select:none;touch-action:none}
+  .compare .layer{position:absolute;inset:0} .compare img{width:100%;height:100%;object-fit:cover;display:block}
+  .compare .before{filter:grayscale(1) contrast(.92) brightness(.8)}
+  .divider{position:absolute;top:0;bottom:0;width:2px;background:var(--gold);left:50%;cursor:ew-resize}
+  .divider .grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:var(--gold);color:#1a1305;display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+  .ovl{position:absolute;inset:0;pointer-events:none}
+  .ba-tag{position:absolute;top:14px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:.08em}
+  .ba-tag.l{left:14px;background:rgba(10,10,12,.7);border:1px solid #2b2b33;color:var(--muted)} .ba-tag.r{right:14px;background:var(--red);color:#fff}
+  @media print{
+    body{background:#fff;color:#000} .topbar,.nav,.ia-panel,.btn,#gate{display:none!important}
+    .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid} .wrap{max-width:100%}
+    .formula{background:#f4f4f4;color:#000}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== PORTÃO = LANDING (vídeo corrido → login inline) ===================== -->
+<div id="gate">
+  <div class="wordmark">MAE<b>S</b>TRO</div>
+  <div class="progress" id="bar"></div>
+
+  <!-- ATO 1: o dia roda como vídeo (fotos reais escrubadas pelo scroll) -->
+  <div class="scrolly" id="scrolly">
+    <div class="stage">
+      <div class="film-wrap" id="filmWrap">
+        <canvas id="film" width="1280" height="720"></canvas>
+        <div class="vignette"></div>
+      </div>
+      <div class="cap" id="cap0"><div class="k">Você foi a campo</div><h2>Um dia na sua loja.</h2><p>Suas fotos do dia-a-dia, do abrir ao fechar — o scroll roda como um vídeo.</p></div>
+      <div class="cap" id="cap1"><div class="k">A cena ganha leitura</div><h2>A fila se forma.<br>O drive enche.</h2><p>Cada quadro é um instante real da operação: balcão, totem, drive.</p></div>
+      <div class="cap" id="cap2"><div class="k">O modelo lê a operação</div><h2>M/M/s entra em cena.</h2><p>Erlang-C transforma λ e μ observados em Wq, ρ e na escala recomendada.</p></div>
+      <div class="badge" id="b1" style="left:18%;top:62%"><div class="lab">Balcão · λ</div><div class="val" id="vLam">0,0 <small>/min</small></div></div>
+      <div class="badge" id="b2" style="left:66%;top:30%"><div class="lab">Drive · ρ</div><div class="val" id="vRho">0,00</div></div>
+      <div class="badge" id="b3" style="left:42%;top:72%"><div class="lab">Espera · Wq</div><div class="val" id="vWq">0,0 <small>min</small></div></div>
+      <div class="cockpitPv" id="cockpitPv">
+        <div class="lead">e vira o cockpit</div>
+        <div class="kpis">
+          <div class="kpi"><div class="l">Clientes / h</div><div class="num" id="k1">0</div></div>
+          <div class="kpi"><div class="l">Wq atual</div><div class="num gold" id="k2">0</div></div>
+          <div class="kpi"><div class="l">Atendentes rec.</div><div class="num" id="k3">0</div></div>
+          <div class="kpi"><div class="l">SKUs em alerta</div><div class="num red" id="k4">0</div></div>
+        </div>
+        <div class="themes"><span>Filas</span><span>PERT</span><span>EOQ</span><span>Jogos</span></div>
+      </div>
+      <div class="hint" id="hint">role — o dia roda como um vídeo</div>
+    </div>
+  </div>
+
+  <!-- FIM CONTÍNUO: login inline dos 3 papéis (sem link externo) -->
+  <section class="enter">
+    <div class="k">Pronto para assumir o comando</div>
+    <h2>Entre no Maestro</h2>
+    <p>Escolha seu papel e entre — o cockpit, o KDS e a coleta se ajustam a você, sem sair da página.</p>
+    <div class="roles" id="roleSel">
+      <button data-r="gerente">Gerente</button>
+      <button data-r="funcionario">Funcionário</button>
+      <button data-r="coletador">Coletador</button>
+    </div>
+    <div class="loginbox">
+      <label class="fld" style="text-align:left">E-mail<input id="email" type="email" placeholder="voce@empresajr.org" /></label>
+      <label class="fld" style="text-align:left">Senha<input id="senha" type="password" placeholder="••••••" /></label>
+      <div class="row"><button class="btn grow" id="btnLogin">Entrar</button><button class="btn sec grow" id="btnSignup">Cadastrar</button></div>
+      <div id="gateMsg" class="small" style="min-height:18px"></div>
+      <div class="muted small">A chave da IA fica só no servidor (Edge Function). Este cliente só usa credenciais públicas protegidas por RLS.</div>
+    </div>
+  </section>
+
+  <!-- antes/depois arrastável (foto crua × operação instrumentada) -->
+  <section class="ba">
+    <h3>O mesmo quadro, <b>antes e depois</b> do Maestro</h3>
+    <p class="sub">Arraste o divisor: à esquerda, a foto de campo crua; à direita, a operação instrumentada — fila medida, gargalo destacado, recomendação na tela.</p>
+    <div class="compare" id="cmp">
+      <div class="layer after"><img id="cmpAfterImg" alt="" />
+        <svg class="ovl" viewBox="0 0 1200 675" preserveAspectRatio="xMidYMid slice">
+          <rect x="40" y="40" width="430" height="56" rx="10" fill="rgba(255,188,13,.16)" stroke="#FFC72C"/>
+          <text x="60" y="76" fill="#FFC72C" font-size="22" font-weight="700">Wq 0,7 min · s=4 (Erlang-C)</text>
+          <rect x="40" y="560" width="520" height="56" rx="10" fill="rgba(218,41,28,.18)" stroke="#DA291C"/>
+          <text x="60" y="596" fill="#ff6a5e" font-size="20" font-weight="700">⚠ Drive: ρ alto (tandem) — abrir 2ª janela</text>
+        </svg>
+      </div>
+      <div class="layer before" id="cmpBefore"><img id="cmpBeforeImg" alt="" />
+        <svg class="ovl" viewBox="0 0 1200 675" preserveAspectRatio="xMidYMid slice"><text x="40" y="640" fill="#d9d4c8" font-size="18" font-weight="700">foto crua · sem dado</text></svg>
+      </div>
+      <span class="ba-tag l">ANTES · foto crua</span><span class="ba-tag r">DEPOIS · instrumentado</span>
+      <div class="divider" id="div"><div class="grip">⇆</div></div>
+    </div>
+  </section>
+</div>
+
+<!-- APP (montado por app.js conforme o papel) -->
+<div id="app" class="hidden"></div>
+
+<!-- Painel IA (copiloto contextual) -->
+<div class="ia-panel" id="iaPanel">
+  <div class="row between center" style="padding:14px;border-bottom:1px solid var(--line)"><b>Copiloto de PO</b><button class="btn sm sec" id="iaClose">fechar</button></div>
+  <div class="ia-msgs" id="iaMsgs"></div>
+  <div class="row" style="padding:12px;border-top:1px solid var(--line)"><input id="iaInput" class="grow" placeholder="pergunte algo…" /><button class="btn" id="iaSend">↑</button></div>
+</div>
+
+<!-- ===================== landing engine (scrollytelling) ===================== -->
+<script>
+(function(){
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const sstep=(a,b,x)=>{x=clamp((x-a)/(b-a),0,1);return x*x*(3-2*x);};
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const fmt=(n,d=1)=>n.toFixed(d).replace('.',',');
+  const el=id=>document.getElementById(id);
+  // FRAMES reais (gerados de /Fotos por tools/make_frames.ps1)
+  const FRAMES=Array.from({length:20},(_,i)=>`fotos/frame_${String(i+1).padStart(2,'0')}.jpg`);
+  const imgs=FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
+  const cv=el('film'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  function placeholder(t){ctx.fillStyle='#0d0d11';ctx.fillRect(0,0,W,H);ctx.fillStyle='#FFC72C';ctx.font='28px sans-serif';ctx.fillText('Maestro',40,60);}
+  function paint(t){ if(imgs.length){const im=imgs[clamp(Math.floor(t*(imgs.length-1)+1e-4),0,imgs.length-1)]; if(im&&im.complete&&im.naturalWidth){ctx.drawImage(im,0,0,W,H);return;}} placeholder(t); }
+  function setCap(node,on){node.style.opacity=on?1:0;node.style.transform=`translateY(${on?0:18}px)`;}
+  function render(p){
+    el('bar').style.width=(p*100)+'%';
+    el('hint').style.opacity=1-sstep(0,0.05,p);
+    paint(clamp(sstep(0,0.56,p),0,1));
+    el('filmWrap').style.filter=`grayscale(${1-sstep(0.12,0.4,p)})`;
+    el('filmWrap').style.opacity=lerp(1,0.14,sstep(0.6,0.84,p));
+    setCap(el('cap0'),p<0.16);setCap(el('cap1'),p>=0.16&&p<0.42);setCap(el('cap2'),p>=0.42&&p<0.6);
+    const bShow=sstep(0.4,0.5,p)*(1-sstep(0.6,0.7,p)),f=sstep(0.44,0.6,p);
+    ['b1','b2','b3'].forEach(id=>el(id).style.opacity=bShow);
+    el('vLam').innerHTML=`${fmt(1.26*f)} <small>/min</small>`;el('vRho').textContent=fmt(0.92*f,2);el('vWq').innerHTML=`${fmt(2.2-1.5*f)} <small>min</small>`;
+    const c=sstep(0.6,0.84,p);
+    el('cockpitPv').style.opacity=c;el('cockpitPv').style.transform=`translateY(${lerp(26,0,c)}px)`;
+    el('k1').textContent=Math.round(76*c);el('k2').textContent=fmt(2.2-1.5*c)+' min';el('k3').textContent=Math.round(4*c);el('k4').textContent=Math.round(3*c);
+  }
+  const scrolly=el('scrolly');
+  function onScroll(){if(!scrolly)return;const r=scrolly.getBoundingClientRect();const total=scrolly.offsetHeight-innerHeight;render(clamp(-r.top/total,0,1));}
+  let tick=false;addEventListener('scroll',()=>{if(!tick){requestAnimationFrame(()=>{onScroll();tick=false;});tick=true;}},{passive:true});
+  addEventListener('resize',onScroll);imgs.forEach(im=>im.onload=onScroll);onScroll();
+  // antes/depois usa frames reais (meio do dia = pico)
+  const midFrame=FRAMES[Math.floor(FRAMES.length/2)];
+  const aImg=el('cmpAfterImg'),bImg=el('cmpBeforeImg'); if(aImg){aImg.src=midFrame;bImg.src=midFrame;}
+  const cmp=el('cmp'),divEl=el('div'),before=el('cmpBefore');
+  function setX(px){const w=cmp.clientWidth;const x=clamp(px,0,w);before.style.clipPath=`inset(0 ${w-x}px 0 0)`;divEl.style.left=x+'px';}
+  setTimeout(()=>setX(cmp.clientWidth*0.5),80);
+  let drag=false;const xy=e=>(e.touches?e.touches[0].clientX:e.clientX)-cmp.getBoundingClientRect().left;
+  divEl.addEventListener('pointerdown',()=>drag=true);addEventListener('pointerup',()=>drag=false);
+  addEventListener('pointermove',e=>{if(drag)setX(xy(e));});
+  cmp.addEventListener('pointerdown',e=>{if(e.target!==divEl&&!divEl.contains(e.target))setX(xy(e));});
+})();
+</script>
+
+<script src="js/config.js"></script>
+<script src="js/motor.js"></script>
+<script src="js/ingest.js"></script>
+<script src="js/data.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

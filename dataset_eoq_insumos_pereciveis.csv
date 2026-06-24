@@ -1,0 +1,16 @@
+sku,descricao,demanda_anual_D,custo_pedido_S_R$,custo_manutencao_h_R$_unid_ano,preco_unitario_R$,lead_time_dias,validade_dias,CV_demanda,EOQ_calculado_Q*,ROP_calculado,pedidos_por_ano,freq_pedido_dias,viola_validade,abordagem_recomendada,custo_total_anual_R$
+SKU-001,Hambúrguer 90/10 (caixa 100un),1820,25,22.0,95.0,3,5,0.15,64.3,17.1,28.3,12.9,True,Perecível crítico — usar modelo de período fixo (reposição diária/dois dias),174314.92
+SKU-002,Hambúrguer quarteirão (caixa 60un),950,22,28.0,145.0,3,5,0.18,38.6,9.1,24.6,14.8,True,Perecível crítico — usar modelo de período fixo (reposição diária/dois dias),138831.85
+SKU-003,Pão Big Mac (pacote 24un),2400,18,18.0,22.0,2,7,0.12,69.3,15.0,34.6,10.5,True,Perecível crítico — usar modelo de período fixo (reposição diária/dois dias),54047.08
+SKU-004,Pão brioche premium (pacote 24un),850,15,16.0,38.0,2,5,0.35,39.9,6.6,21.3,17.1,True,Perecível crítico — usar modelo de período fixo (reposição diária/dois dias),32938.75
+SKU-005,Pão padrão (pacote 24un),3200,18,15.0,16.0,2,7,0.1,87.6,19.6,36.5,10.0,True,Perecível crítico — usar modelo de período fixo (reposição diária/dois dias),52514.53
+SKU-006,Queijo cheddar fatiado (pacote 1kg),1450,60,12.0,42.0,3,30,0.14,120.4,13.5,12.0,30.3,True,Perecível — adaptar EOQ ou usar modelo de revisão periódica,62344.99
+SKU-007,Bacon fatiado (pacote 500g),780,80,14.0,35.0,4,21,0.4,94.4,11.4,8.3,44.2,True,Perecível — adaptar EOQ ou usar modelo de revisão periódica,28621.82
+SKU-008,Alface americana (caixa 5kg),950,12,18.0,28.0,2,4,0.22,35.6,6.5,26.7,13.7,True,Perecível crítico — usar modelo de período fixo (reposição diária/dois dias),27240.62
+SKU-009,Tomate italiano (caixa 5kg),720,12,15.0,22.0,2,4,0.28,33.9,5.2,21.2,17.2,True,Perecível crítico — usar modelo de período fixo (reposição diária/dois dias),16349.12
+SKU-010,Cebola roxa fatiada (kg),480,40,14.0,12.0,3,7,0.15,52.4,4.5,9.2,39.8,True,Perecível crítico — usar modelo de período fixo (reposição diária/dois dias),6493.21
+SKU-011,"Batata pré-frita McCain (caixa 6x2,5kg)",2200,220,15.0,165.0,5,90,0.12,254.0,32.8,8.7,42.1,False,EOQ clássico aplicável,366810.51
+SKU-012,Big Mac sauce (galão 4L importado),96,380,22.0,285.0,14,60,0.1,57.6,3.8,1.7,219.0,True,Perecível — adaptar EOQ ou usar modelo de revisão periódica,28626.93
+SKU-013,Ketchup (galão 4L),240,80,5.5,38.0,5,180,0.08,83.6,3.5,2.9,127.1,False,EOQ clássico aplicável,9579.57
+SKU-014,Mostarda amarela (galão 4L),180,80,5.0,35.0,5,180,0.1,75.9,2.6,2.4,153.9,False,EOQ clássico aplicável,6679.47
+SKU-015,Picles (balde 5L),200,80,6.5,65.0,7,90,0.1,70.2,4.1,2.9,128.1,True,EOQ clássico aplicável,13456.07

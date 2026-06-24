@@ -1,0 +1,23 @@
+atividade,descricao,predecessoras,tempo_otimista_dias,tempo_provavel_dias,tempo_pessimista_dias,tempo_esperado_te_dias,variancia,desvio_padrao,custo_normal_R$,custo_crash_total_R$,max_dias_crashing,custo_crash_por_dia_R$
+A,Definição do produto e ficha técnica,,5,7,12,7.5,1.361,1.167,8000,14000,3,2000.0
+B,Aprovação corporativa do produto,A,8,10,15,10.5,1.361,1.167,2000,5000,2,1500.0
+C,Sourcing do fornecedor de acarajé/vatapá,A,10,14,22,14.67,4.0,2.0,5000,12000,5,1400.0
+D,Testes de degustação interna,A,4,6,9,6.17,0.694,0.833,3500,7000,2,1750.0
+E,Definição de preço e margem,"B,D",3,4,6,4.17,0.25,0.5,1500,4000,1,2500.0
+F,Negociação contrato fornecedor,C,5,8,13,8.33,1.778,1.333,4000,9000,3,1666.67
+G,Compra de equipamento adicional (fritadeira específica),B,7,12,20,12.5,4.694,2.167,25000,40000,4,3750.0
+H,Adaptação física da cozinha,G,8,10,14,10.33,1.0,1.0,12000,22000,3,3333.33
+I,Compra de embalagens customizadas,E,6,9,14,9.33,1.778,1.333,6500,11000,3,1500.0
+J,Treinamento técnico dos cozinheiros,"F,H",6,8,12,8.33,1.0,1.0,9000,16000,3,2333.33
+K,"Treinamento do balcão (totem, pedidos, app)",E,3,5,8,5.17,0.694,0.833,4500,8000,2,1750.0
+L,Adaptação do sistema de PDV (cardápio digital),E,4,6,9,6.17,0.694,0.833,3000,7500,2,2250.0
+M,Validação sanitária ANVISA estadual,"F,H",10,15,25,15.83,6.25,2.5,6000,14000,6,1333.33
+N,Produção dos materiais de marketing,E,8,11,16,11.33,1.778,1.333,12000,22000,4,2500.0
+O,Distribuição dos materiais nas lojas,N,3,4,6,4.17,0.25,0.5,2500,5500,1,3000.0
+P,Treinamento gerentes (storytelling do produto),"K,L",2,3,5,3.17,0.25,0.5,3500,6500,1,3000.0
+Q,Testes operacionais piloto (loja única),"J,M,P",4,6,10,6.33,1.0,1.0,8000,14000,3,2000.0
+R,Ajustes pós-piloto,Q,3,5,8,5.17,0.694,0.833,5000,9500,2,2250.0
+S,Pré-lançamento (soft opening),"R,I,O",2,3,5,3.17,0.25,0.5,4000,7500,1,3500.0
+T,Análise de feedback do soft opening,S,2,3,4,3.0,0.111,0.333,1500,3000,1,1500.0
+U,Ajustes finais,T,2,4,7,4.17,0.694,0.833,3500,6500,2,1500.0
+V,Lançamento oficial (Dia D),U,1,1,2,1.17,0.028,0.167,8000,12000,0,0.0

@@ -1,0 +1,21 @@
+cenario,nome_cenario,tipo,jogador_linha,estrategia_linha,jogador_coluna,estrategia_coluna,payoff_linha_R$mil,payoff_coluna_R$mil
+A,McD vs BK — Promoção semanal de combo,Dilema do prisioneiro,McDonald's,Promoção agressiva,Burger King,Promoção agressiva,45,38
+A,McD vs BK — Promoção semanal de combo,Dilema do prisioneiro,McDonald's,Promoção agressiva,Burger King,Preço cheio,95,25
+A,McD vs BK — Promoção semanal de combo,Dilema do prisioneiro,McDonald's,Preço cheio,Burger King,Promoção agressiva,28,88
+A,McD vs BK — Promoção semanal de combo,Dilema do prisioneiro,McDonald's,Preço cheio,Burger King,Preço cheio,75,65
+B,McD vs Madero — Lançamento Quarteirão Premium vs Madero Clássico,Sem Nash puro — explorar estratégia mista,McDonald's,Lançar premium R$35,Madero,Preço alto R$45,62,78
+B,McD vs Madero — Lançamento Quarteirão Premium vs Madero Clássico,Sem Nash puro — explorar estratégia mista,McDonald's,Lançar premium R$35,Madero,Desconto R$35,38,95
+B,McD vs Madero — Lançamento Quarteirão Premium vs Madero Clássico,Sem Nash puro — explorar estratégia mista,McDonald's,Manter linha R$22,Madero,Preço alto R$45,85,68
+B,McD vs Madero — Lançamento Quarteirão Premium vs Madero Clássico,Sem Nash puro — explorar estratégia mista,McDonald's,Manter linha R$22,Madero,Desconto R$35,72,82
+C,McD vs Subway — Investimento em café da manhã,Jogo de coordenação — dois Nash puros assimétricos,McDonald's,Investir forte,Subway,Investir forte,35,32
+C,McD vs Subway — Investimento em café da manhã,Jogo de coordenação — dois Nash puros assimétricos,McDonald's,Investir forte,Subway,Manter atual,78,18
+C,McD vs Subway — Investimento em café da manhã,Jogo de coordenação — dois Nash puros assimétricos,McDonald's,Manter atual,Subway,Investir forte,15,85
+C,McD vs Subway — Investimento em café da manhã,Jogo de coordenação — dois Nash puros assimétricos,McDonald's,Manter atual,Subway,Manter atual,52,50
+D,Triplo — McD vs BK vs Habib's — Sanduíche regional baiano,Jogo de 3 jogadores — equilíbrios múltiplos,McDonald's,Entrar,"BK=E, Habibs=E","BK=Entrar, Habibs=Entrar",28,"BK:22, Hab:35"
+D,Triplo — McD vs BK vs Habib's — Sanduíche regional baiano,Jogo de 3 jogadores — equilíbrios múltiplos,McDonald's,Entrar,"BK=E, Habibs=N","BK=Entrar, Habibs=Não",52,"BK:48, Hab:0"
+D,Triplo — McD vs BK vs Habib's — Sanduíche regional baiano,Jogo de 3 jogadores — equilíbrios múltiplos,McDonald's,Entrar,"BK=N, Habibs=E","BK=Não, Habibs=Entrar",45,"BK:0, Hab:58"
+D,Triplo — McD vs BK vs Habib's — Sanduíche regional baiano,Jogo de 3 jogadores — equilíbrios múltiplos,McDonald's,Entrar,"BK=N, Habibs=N","BK=Não, Habibs=Não",95,"BK:0, Hab:0"
+D,Triplo — McD vs BK vs Habib's — Sanduíche regional baiano,Jogo de 3 jogadores — equilíbrios múltiplos,McDonald's,Não entrar,"BK=E, Habibs=E","BK=Entrar, Habibs=Entrar",0,"BK:42, Hab:55"
+D,Triplo — McD vs BK vs Habib's — Sanduíche regional baiano,Jogo de 3 jogadores — equilíbrios múltiplos,McDonald's,Não entrar,"BK=E, Habibs=N","BK=Entrar, Habibs=Não",0,"BK:88, Hab:0"
+D,Triplo — McD vs BK vs Habib's — Sanduíche regional baiano,Jogo de 3 jogadores — equilíbrios múltiplos,McDonald's,Não entrar,"BK=N, Habibs=E","BK=Não, Habibs=Entrar",0,"BK:0, Hab:92"
+D,Triplo — McD vs BK vs Habib's — Sanduíche regional baiano,Jogo de 3 jogadores — equilíbrios múltiplos,McDonald's,Não entrar,"BK=N, Habibs=N","BK=Não, Habibs=Não",0,"BK:0, Hab:0"
